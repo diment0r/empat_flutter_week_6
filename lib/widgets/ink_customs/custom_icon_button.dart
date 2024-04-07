@@ -21,13 +21,6 @@ class _CustomIconButtonState extends State<CustomIconButton>
     with AutomaticKeepAliveClientMixin<CustomIconButton> {
   late bool isLiked;
 
-  // !!! ???
-  // @override
-  // void initState() {
-  //   super.initState();
-  // }
-  // !!! ???
-
   void onIconTap() {
     setState(() {
       if (!isLiked) {
@@ -46,7 +39,7 @@ class _CustomIconButtonState extends State<CustomIconButton>
   @override
   Widget build(BuildContext context) {
     isLiked =
-        widget.favouritesModel.favourites.contains(widget._product); // !!! ???
+        widget.favouritesModel.favourites.contains(widget._product);
     super.build(context);
     return Container(
       width: 35,
