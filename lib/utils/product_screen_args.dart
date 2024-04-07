@@ -1,15 +1,9 @@
-import 'package:empat_flutter_week_6/data/data.dart';
+import 'package:empat_flutter_week_6/state/product_model.dart';
 
 class ProductScreenArguments {
-  final Product product;
-  final List<Product> favourites;
-  final Function addToFavouritesStateFunction;
-  final Function removeFromFavouritesStateFunction;
+  final ProductModel product;
 
   const ProductScreenArguments({
     required this.product,
-    required this.favourites,
-    required this.addToFavouritesStateFunction,
-    required this.removeFromFavouritesStateFunction,
   });
 }

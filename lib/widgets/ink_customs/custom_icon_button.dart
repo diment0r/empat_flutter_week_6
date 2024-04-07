@@ -1,23 +1,17 @@
-import 'package:empat_flutter_week_6/data/data.dart';
+import 'package:empat_flutter_week_6/state/favourites_model.dart';
+import 'package:empat_flutter_week_6/state/product_model.dart';
 import 'package:empat_flutter_week_6/utils/colors.dart';
 import 'package:flutter/material.dart';
 
 class CustomIconButton extends StatefulWidget {
-  final Product _product;
-  final List<Product> favourites;
-  final Function? addToFavouritesStateFunction;
-  final Function removeFromFavouritesStateFunction;
-  bool isLiked = false;
+  final ProductModel _product;
+  final FavoutritesModel favouritesModel;
 
-  CustomIconButton({
+  const CustomIconButton({
     super.key,
-    required Product product,
-    required this.favourites,
-    required this.addToFavouritesStateFunction,
-    required this.removeFromFavouritesStateFunction,
-  }) : _product = product {
-    isLiked = favourites.contains(_product);
-  }
+    required ProductModel product,
+    required this.favouritesModel,
+  }) : _product = product;
 
   @override
   State<CustomIconButton> createState() => _CustomIconButtonState();
@@ -25,22 +19,23 @@ class CustomIconButton extends StatefulWidget {
 
 class _CustomIconButtonState extends State<CustomIconButton>
     with AutomaticKeepAliveClientMixin<CustomIconButton> {
-  // ? late bool isLiked; // тоже самое что и с toggle
+  late bool isLiked;
 
-  @override
-  void initState() {
-    // ? isLiked = widget.favourites.contains(widget._product);
-    super.initState();
-  }
+  // !!! ???
+  // @override
+  // void initState() {
+  //   super.initState();
+  // }
+  // !!! ???
 
   void onIconTap() {
     setState(() {
-      if (!widget.isLiked && widget.addToFavouritesStateFunction != null) {
-        widget.isLiked = true;
-        widget.addToFavouritesStateFunction!(widget._product);
+      if (!isLiked) {
+        isLiked = true;
+        widget.favouritesModel.addToFavourite(widget._product);
       } else {
-        widget.isLiked = false;
-        widget.removeFromFavouritesStateFunction(widget._product);
+        isLiked = false;
+        widget.favouritesModel.removeFromFavourite(widget._product);
       }
     });
   }
@@ -50,6 +45,8 @@ class _CustomIconButtonState extends State<CustomIconButton>
 
   @override
   Widget build(BuildContext context) {
+    isLiked =
+        widget.favouritesModel.favourites.contains(widget._product); // !!! ???
     super.build(context);
     return Container(
       width: 35,
@@ -64,8 +61,11 @@ class _CustomIconButtonState extends State<CustomIconButton>
           onTap: onIconTap,
           borderRadius: const BorderRadius.all(Radius.circular(50)),
           child: Ink(
-            child: Icon(Icons.favorite,
-                size: 23, color: widget.isLiked ? CColors.red : CColors.dark),
+            child: Icon(
+              Icons.favorite,
+              size: 23,
+              color: isLiked ? CColors.red : CColors.dark,
+            ),
           ),
         ),
       ),

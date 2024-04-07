@@ -1,21 +1,22 @@
-import 'package:empat_flutter_week_6/data/data.dart';
+import 'package:empat_flutter_week_6/state/cart_model.dart';
+import 'package:empat_flutter_week_6/state/favourites_model.dart';
+import 'package:empat_flutter_week_6/state/product_model.dart';
 import 'package:empat_flutter_week_6/utils/colors.dart';
 import 'package:empat_flutter_week_6/widgets/custom_toggle.dart';
 import 'package:empat_flutter_week_6/widgets/ink_customs/custom_button.dart';
 import 'package:empat_flutter_week_6/widgets/ink_customs/custom_icon_button.dart';
 import 'package:empat_flutter_week_6/widgets/loading/custom_octo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class CustomFavouriteTileWidget extends StatelessWidget {
-  final Product product;
-  final List<Product> favourites;
-  final Function removeFromFavouritesStateFunction;
+  final ProductModel product;
+  final FavoutritesModel favoutritesModel;
 
   const CustomFavouriteTileWidget({
     super.key,
     required this.product,
-    required this.favourites,
-    required this.removeFromFavouritesStateFunction,
+    required this.favoutritesModel,
   });
 
   @override
@@ -31,12 +32,12 @@ class CustomFavouriteTileWidget extends StatelessWidget {
                 Positioned(
                   right: 0,
                   top: 0,
-                  child: CustomIconButton(
-                    product: product,
-                    favourites: favourites,
-                    addToFavouritesStateFunction: null,
-                    removeFromFavouritesStateFunction:
-                        removeFromFavouritesStateFunction,
+                  child: Consumer<FavoutritesModel>(
+                    builder: (context, favouritesModel, child) =>
+                        CustomIconButton(
+                      product: product,
+                      favouritesModel: favouritesModel,
+                    ),
                   ),
                 ),
                 _TileBody(product: product),
@@ -69,12 +70,18 @@ class _TileImage extends StatelessWidget {
 }
 
 class _TileBody extends StatelessWidget {
-  final Product product;
+  final ProductModel product;
 
   const _TileBody({super.key, required this.product});
 
+    void setSize(String size) {
+      product.selectedSize = size;
+    }
+
   @override
   Widget build(BuildContext context) {
+    CartModel cartModel = Provider.of<CartModel>(context);
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -99,13 +106,16 @@ class _TileBody extends StatelessWidget {
         ),
         CustomToggleWidget(
           sizes: product.sizes,
+          setSize: setSize,
         ),
-        const CustomButtonWidget(
+        CustomButtonWidget(
           buttonWidth: 180,
           buttonHeight: 40,
           iconSize: 18,
           fontSize: 14,
           borderRadius: 13,
+          cartModel: cartModel,
+          product: product,
         ),
       ],
     );

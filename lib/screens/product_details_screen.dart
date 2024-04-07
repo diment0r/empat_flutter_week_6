@@ -1,44 +1,50 @@
-import 'package:empat_flutter_week_6/data/data.dart';
+import 'package:empat_flutter_week_6/state/cart_model.dart';
+import 'package:empat_flutter_week_6/state/favourites_model.dart';
+import 'package:empat_flutter_week_6/state/product_model.dart';
 import 'package:empat_flutter_week_6/utils/colors.dart';
 import 'package:empat_flutter_week_6/utils/product_screen_args.dart';
 import 'package:empat_flutter_week_6/widgets/custom_toggle.dart';
 import 'package:empat_flutter_week_6/widgets/ink_customs/custom_button.dart';
 import 'package:empat_flutter_week_6/widgets/ink_customs/custom_icon_button.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class ProductDetailsScreenWidget extends StatelessWidget {
   const ProductDetailsScreenWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final cartModel = Provider.of<CartModel>(context);
     final ProductScreenArguments arguments =
         (ModalRoute.of(context)?.settings.arguments) as ProductScreenArguments;
 
-    Product product = arguments.product;
+    ProductModel product = arguments.product;
 
     return Scaffold(
       appBar: AppBar(
-          backgroundColor: CColors.dark,
-          foregroundColor: CColors.light,
-          title: Text(product.name),
-          actions: [
-            Padding(
-              padding: const EdgeInsets.only(right: 10),
-              child: CustomIconButton(
+        backgroundColor: CColors.dark,
+        foregroundColor: CColors.light,
+        surfaceTintColor: Colors.transparent,
+        title: Text(product.name),
+        actions: [
+          Padding(
+            padding: const EdgeInsets.only(right: 10),
+            child: Consumer<FavoutritesModel>(
+              builder: (context, favouritesModel, child) => CustomIconButton(
                 product: product,
-                favourites: arguments.favourites,
-                addToFavouritesStateFunction:
-                    arguments.addToFavouritesStateFunction,
-                removeFromFavouritesStateFunction:
-                    arguments.removeFromFavouritesStateFunction,
+                favouritesModel: favouritesModel,
               ),
-            )
-          ]),
+            ),
+          )
+        ],
+      ),
       floatingActionButton: FloatingActionButton(
         elevation: 0,
         backgroundColor: CColors.dark,
         foregroundColor: CColors.light,
-        onPressed: () {},
+        onPressed: () {
+          cartModel.addToBasket(product);
+        },
         child: const Icon(Icons.add_shopping_cart),
       ),
       body: SingleChildScrollView(
@@ -48,7 +54,10 @@ class ProductDetailsScreenWidget extends StatelessWidget {
               tag: 'Dash${product.id}',
               child: Image.asset(product.imageAsset),
             ),
-            DetailsBodyWidget(product: product),
+            DetailsBodyWidget(
+              product: product,
+              cartModel: cartModel,
+            ),
           ],
         ),
       ),
@@ -57,8 +66,18 @@ class ProductDetailsScreenWidget extends StatelessWidget {
 }
 
 class DetailsBodyWidget extends StatelessWidget {
-  final Product product;
-  const DetailsBodyWidget({super.key, required this.product});
+  final ProductModel product;
+  final CartModel cartModel;
+
+  void setSize(String size) {
+    product.selectedSize = size;
+  }
+
+  const DetailsBodyWidget({
+    super.key,
+    required this.product,
+    required this.cartModel,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -68,7 +87,7 @@ class DetailsBodyWidget extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           Padding(
-            padding: EdgeInsets.only(bottom: 10),
+            padding: const EdgeInsets.only(bottom: 10),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -94,8 +113,12 @@ class DetailsBodyWidget extends StatelessWidget {
             minHeight: 30,
             minWidth: 45,
             fontSize: 13,
+            setSize: setSize,
           ),
-          const CustomButtonWidget(),
+          CustomButtonWidget(
+            cartModel: cartModel,
+            product: product,
+          ),
           const SizedBox(height: 20),
           Text(
             product.description,

@@ -1,13 +1,15 @@
-import 'package:empat_flutter_week_6/data/data.dart';
+import 'package:empat_flutter_week_6/state/user_model.dart';
 import 'package:empat_flutter_week_6/utils/colors.dart';
 import 'package:flutter/material.dart';
+import 'package:octo_image/octo_image.dart';
 
 class DrawerWidget extends StatelessWidget {
-  const DrawerWidget({super.key});
+  final UserModel user;
+
+  const DrawerWidget({super.key, required this.user});
 
   @override
   Widget build(BuildContext context) {
-    final User user = AppData.user;
     return Drawer(
       backgroundColor: CColors.light,
       child: Column(
@@ -22,7 +24,7 @@ class DrawerWidget extends StatelessWidget {
 }
 
 class DrawerBodyWidget extends StatelessWidget {
-  final User user;
+  final UserModel user;
 
   const DrawerBodyWidget({super.key, required this.user});
 
@@ -31,7 +33,7 @@ class DrawerBodyWidget extends StatelessWidget {
     return Column(
       children: [
         ListTile(
-          leading: Icon(Icons.account_balance, size: 30),
+          leading: const Icon(Icons.account_balance, size: 30),
           title: const Text('Balance'),
           subtitle: Text('${user.balance}0 UAH'),
           onTap: () {},
@@ -60,7 +62,7 @@ class DrawerBodyWidget extends StatelessWidget {
 }
 
 class DrawerHeaderWidget extends StatelessWidget {
-  final User user;
+  final UserModel user;
   const DrawerHeaderWidget({super.key, required this.user});
 
   @override

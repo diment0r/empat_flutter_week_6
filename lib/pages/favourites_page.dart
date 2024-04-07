@@ -1,16 +1,10 @@
-import 'package:empat_flutter_week_6/data/data.dart';
+import 'package:empat_flutter_week_6/state/favourites_model.dart';
 import 'package:empat_flutter_week_6/widgets/tile_customs/custom_favourite_tile.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class FavouritesPageWidget extends StatelessWidget {
-  final List<Product> userFavourites;
-  final Function removeFromFavouritesStateFunction;
-
-  const FavouritesPageWidget({
-    super.key,
-    required this.userFavourites,
-    required this.removeFromFavouritesStateFunction,
-  });
+  const FavouritesPageWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -18,15 +12,17 @@ class FavouritesPageWidget extends StatelessWidget {
       slivers: [
         SliverPadding(
           padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 20),
-          sliver: SliverList.separated(
-            addAutomaticKeepAlives: true,
-            separatorBuilder: (context, index) => const SizedBox(height: 10),
-            itemCount: userFavourites.length,
-            itemBuilder: (context, index) => CustomFavouriteTileWidget(
-              product: userFavourites[index],
-              favourites: userFavourites,
-              removeFromFavouritesStateFunction:
-                  removeFromFavouritesStateFunction,
+          sliver: Consumer<FavoutritesModel>(
+            builder: (context, favouritesModel, child) => SliverList.separated(
+              addAutomaticKeepAlives: true,
+              separatorBuilder: (context, index) => const SizedBox(height: 10),
+              itemCount: favouritesModel.favourites.length,
+              itemBuilder: (context, index) => CustomFavouriteTileWidget(
+                key: Key(
+                    "favourite_product_${favouritesModel.favourites[index].id}"),
+                product: favouritesModel.favourites[index],
+                favoutritesModel: favouritesModel,
+              ),
             ),
           ),
         ),

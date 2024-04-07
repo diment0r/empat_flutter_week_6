@@ -1,20 +1,18 @@
-import 'package:empat_flutter_week_6/data/data.dart';
+import 'package:empat_flutter_week_6/state/favourites_model.dart';
+import 'package:empat_flutter_week_6/state/product_model.dart';
 import 'package:empat_flutter_week_6/widgets/ink_customs/custom_icon_button.dart';
 import 'package:empat_flutter_week_6/widgets/loading/custom_octo.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
+// ? Shimmer вместо текста и как это должно отображаться правильно? 
 
 class CustomCatalogTileWidget extends StatelessWidget {
-  final Product product;
-  final List<Product> favourites;
-  final Function addToFavouritesStateFunction;
-  final Function removeFromFavouritesStateFunction;
+  final ProductModel product;
 
   const CustomCatalogTileWidget({
     super.key,
     required this.product,
-    required this.favourites,
-    required this.addToFavouritesStateFunction,
-    required this.removeFromFavouritesStateFunction,
   });
 
   @override
@@ -25,9 +23,6 @@ class CustomCatalogTileWidget extends StatelessWidget {
       children: [
         _TileImageWidget(
           product: product,
-          favourites: favourites,
-          addToFavouritesStateFunction: addToFavouritesStateFunction,
-          removeFromFavouritesStateFunction: removeFromFavouritesStateFunction,
         ),
         _TileFooterWidget(
           product: product,
@@ -38,17 +33,11 @@ class CustomCatalogTileWidget extends StatelessWidget {
 }
 
 class _TileImageWidget extends StatelessWidget {
-  final Product product;
-  final List<Product> favourites;
-  final Function addToFavouritesStateFunction;
-  final Function removeFromFavouritesStateFunction;
+  final ProductModel product;
 
   const _TileImageWidget({
     super.key,
     required this.product,
-    required this.favourites,
-    required this.addToFavouritesStateFunction,
-    required this.removeFromFavouritesStateFunction,
   });
 
   @override
@@ -70,12 +59,11 @@ class _TileImageWidget extends StatelessWidget {
           Positioned(
             top: 8,
             right: 8,
-            child: CustomIconButton(
-              product: product,
-              favourites: favourites,
-              addToFavouritesStateFunction: addToFavouritesStateFunction,
-              removeFromFavouritesStateFunction:
-                  removeFromFavouritesStateFunction,
+            child: Consumer<FavoutritesModel>(
+              builder: (context, favouritesModel, child) => CustomIconButton(
+                product: product,
+                favouritesModel: favouritesModel,
+              ),
             ),
           ),
         ],
@@ -85,7 +73,7 @@ class _TileImageWidget extends StatelessWidget {
 }
 
 class _TileFooterWidget extends StatelessWidget {
-  final Product product;
+  final ProductModel product;
   const _TileFooterWidget({super.key, required this.product});
 
   @override
@@ -112,5 +100,3 @@ class _TileFooterWidget extends StatelessWidget {
     );
   }
 }
-
-// ? Нужно ли подставлять shimmer также вместо текста, и как это должно отображаться правильно

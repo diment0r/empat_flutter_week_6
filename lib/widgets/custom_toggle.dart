@@ -1,38 +1,34 @@
 import 'package:empat_flutter_week_6/utils/colors.dart';
 import 'package:flutter/material.dart';
 
+// ignore: must_be_immutable
 class CustomToggleWidget extends StatefulWidget {
   double minHeight;
   double minWidth;
   double fontSize;
-
   final List<String> sizes;
-  late List<bool> selectedSizes;
+  Function setSize;
+
   CustomToggleWidget({
     super.key,
     required this.sizes,
     this.minHeight = 25,
     this.minWidth = 30,
     this.fontSize = 11,
-  }) {
-    selectedSizes = List.generate(sizes.length, (index) => index == 0);
-  }
+    required this.setSize,
+  });
 
   @override
   State<CustomToggleWidget> createState() => _CustomToggleWidgetState();
 }
 
-// ??? Exception  isSelected.lenght == children.lenght not true (Toggle)
-// ! Суть ошибки в том что когда я удаляю элемент из списка состояние элемента под удаляемым сбрасывается
-// ! Поэтому я вынес генерирование list<bool> в конструктор, в CustomIconButton тоже самое, фактически это костыль
-
 class _CustomToggleWidgetState extends State<CustomToggleWidget>
     with AutomaticKeepAliveClientMixin<CustomToggleWidget> {
-  // late final List<bool> selectedSizes;
+  late final List<bool> selectedSizes;
 
   @override
   void initState() {
-    // selectedSizes = List.generate(widget.sizes.length, (index) => false);
+    selectedSizes = List.generate(widget.sizes.length, (index) => index == 0);
     super.initState();
   }
 
@@ -43,9 +39,10 @@ class _CustomToggleWidgetState extends State<CustomToggleWidget>
 
   void onTogglePressed(int index) {
     setState(() {
-      for (int i = 0; i < widget.selectedSizes.length; i++) {
-        widget.selectedSizes[i] = i == index;
+      for (int i = 0; i < selectedSizes.length; i++) {
+        selectedSizes[i] = i == index;
       }
+      widget.setSize(widget.sizes[index]);
     });
   }
 
@@ -57,7 +54,7 @@ class _CustomToggleWidgetState extends State<CustomToggleWidget>
     super.build(context);
     return ToggleButtons(
       direction: Axis.horizontal,
-      isSelected: widget.selectedSizes,
+      isSelected: selectedSizes,
       borderRadius: const BorderRadius.all(Radius.circular(7)),
       constraints: BoxConstraints(
         minHeight: widget.minHeight,
@@ -72,7 +69,8 @@ class _CustomToggleWidgetState extends State<CustomToggleWidget>
           .map(
             (size) => Text(
               size,
-              style: TextStyle(fontSize: widget.fontSize, fontWeight: FontWeight.w400),
+              style: TextStyle(
+                  fontSize: widget.fontSize, fontWeight: FontWeight.w400),
             ),
           )
           .toList(),
